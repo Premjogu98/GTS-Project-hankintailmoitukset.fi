@@ -158,7 +158,7 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number):
             if SegField[19] == '':
                 wx.MessageBox(' Short Desc Blank ','hankintailmoitukset.fi', wx.OK | wx.ICON_INFORMATION)
             else:
-                # check_date(get_htmlsource, SegField)
+                check_date(get_htmlsource, SegField)
                 pass
 
             a = False
