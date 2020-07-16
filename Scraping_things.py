@@ -50,9 +50,26 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number):
 
             telphone =  get_htmlsource.partition('Puhelin </div>')[2].partition("</div>")[0].strip()
             telphone = remove_html_tag(telphone)
-
-            Proper_address = f'{buyer_name}<br>\n{Postal_address.strip()}, {Town.strip()}, {country.strip()} - {Postal_code.strip()}, Tel: {telphone.strip()}'
-            SegField[2] = Proper_address.strip()
+            if Postal_address == '':
+                Proper_address = f'{buyer_name}<br>\n{Town.strip()},{country.strip()} - {Postal_code.strip()}, Tel: {telphone.strip()}'
+                Proper_address = string.capwords(str(Proper_address))
+                SegField[2] = Proper_address.strip()
+            elif country == '':
+                Proper_address = f'{buyer_name}<br>\n{Postal_address.strip()},{Town.strip()},Finland - {Postal_code.strip()}, Tel: {telphone.strip()}'
+                Proper_address = string.capwords(str(Proper_address))
+                SegField[2] = Proper_address.strip()
+            elif Postal_code == '':
+                Proper_address = f'{buyer_name}<br>\n{Postal_address.strip()},{Town.strip()},{country.strip()} , Tel: {telphone.strip()}'
+                Proper_address = string.capwords(str(Proper_address))
+                SegField[2] = Proper_address.strip()
+            elif telphone == '':
+                Proper_address = f'{buyer_name}<br>\n{Postal_address.strip()},{Town.strip()},{country.strip()} - {Postal_code.strip()}'
+                Proper_address = string.capwords(str(Proper_address))
+                SegField[2] = Proper_address.strip()
+            else:
+                Proper_address = f'{buyer_name}<br>\n{Postal_address.strip()}, {Town.strip()}, {country.strip()} - {Postal_code.strip()}, Tel: {telphone.strip()}'
+                Proper_address = string.capwords(str(Proper_address))
+                SegField[2] = Proper_address.strip()
 
             purchase_url = get_htmlsource.partition('Verkko-osoite')[2].partition("</a>")[0].strip()
             purchase_url = purchase_url.partition('href="')[2].partition('"')[0].strip()
@@ -67,20 +84,25 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number):
             Tender_detail = Tender_detail.partition('class="value-row-value')[2]
             Tender_detail = remove_html_tag(Tender_detail)
             Tender_detail = Tender_detail.partition('">')[2].partition('<div')[0].strip()
+            Tender_detail = string.capwords(str(Tender_detail))
             if len(Tender_detail) >= 800:
                 Tender_detail = str(Tender_detail)[:800]+'...'
+                Tender_detail = string.capwords(str(Tender_detail))
             Type_of_contract = get_htmlsource.partition('Sopimuksen tyyppi</div></div>')[2].partition('</div>')[0].strip()
             Type_of_contract = remove_html_tag(Type_of_contract)
+            Type_of_contract = string.capwords(str(Type_of_contract))
 
             NUTS_code = get_htmlsource.partition('NUTS-koodi</div>')[2].partition('</span>')[0].strip()
             NUTS_code = remove_html_tag(NUTS_code)
+            if len(NUTS_code) >= 25:
+                NUTS_code = ''
 
             Type_of_procedure = get_htmlsource.partition('Menettelyn luonne </div>')[2].partition('</div>')[0].strip()
             Type_of_procedure = remove_html_tag(Type_of_procedure)
+            Type_of_procedure = string.capwords(str(Type_of_procedure))
 
             SegField[18] = f'{SegField[19]}<br>\nSLyhyt kuvaus: {Tender_detail.strip()}<br>\nSopimuksen tyyppi: {Type_of_contract.strip()}<br>\nNUTS-koodi: {NUTS_code.strip()}<br>\nMenettelyn luonne: {Type_of_procedure.strip()}'
 
-            SegField[18] = string.capwords(str(SegField[18]))
 
             SegField[13] = notice_number.strip()
 
@@ -92,6 +114,7 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number):
             SegField[7] = 'FI'
             SegField[28] = Tender_link
             SegField[31] = 'hankintailmoitukset.fi'
+
             ReplyStrings = get_htmlsource.partition('CPV-koodi</div></div>')[2].partition("</div>")[0].strip()
             ReplyStrings = remove_html_tag(ReplyStrings)
             if ReplyStrings != "":
@@ -135,7 +158,7 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number):
             if SegField[19] == '':
                 wx.MessageBox(' Short Desc Blank ','hankintailmoitukset.fi', wx.OK | wx.ICON_INFORMATION)
             else:
-                check_date(get_htmlsource, SegField)
+                # check_date(get_htmlsource, SegField)
                 pass
 
             a = False
@@ -160,7 +183,6 @@ def check_date(get_htmlSource, SegField):
             day = timedelta_obj.days
             if day > 0:
                 insert_in_Local(get_htmlSource, SegField)
-                print('Live Tender')
             else:
                 print("Expired Tender")
                 Global_var.expired += 1

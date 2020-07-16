@@ -110,7 +110,7 @@ def insert_in_Local(get_htmlSource , SegFeild):
 
 def create_filename(get_htmlSource , SegFeild):
     a = 0
-    basename = "PY359"
+    basename = "PY238"
     Current_dateTime = datetime.now().strftime("%Y%m%d%H%M%S%f")
     Fileid = "".join([basename, Current_dateTime])
     while a == 0:
@@ -211,6 +211,7 @@ def insert_L2L(SegFeild , Fileid):
             mycursor.execute(sql , val)
             mydb.commit()
             print("Code Reached On insert_L2L")
+            print('Live Tender')
             a5 = 1
         except Exception as e:
             Function_name :str = sys._getframe().f_code.co_name

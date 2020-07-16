@@ -60,7 +60,6 @@ def ChromeDriver():
                     count += 1
                     print(f'Link Collect: {str(count)}')
                 else:
-                    Global_var.deadline_Not_given += 1
                     print('Deadline Not Given')
         else:
             print('Publish Date Dead')
@@ -83,7 +82,6 @@ def navigation_things(TenderDeadline_list,browser):
             notice_number =  notice_number.partition('Ilmoituksen numero</span>')[2].partition("</span>")[0].strip()
             notice_number =  notice_number.partition('">')[2]
             break
-        time.sleep(4)
         tab_links_list = []
         for tab_links in browser.find_elements_by_xpath('//*[@class="progress-nav categoryList nav nav-tabs pl-0"]/li/a'):
             tab_links_list.append(tab_links.get_attribute('href'))
@@ -91,7 +89,7 @@ def navigation_things(TenderDeadline_list,browser):
         get_htmlsource = ''
         for tab_link in tab_links_list:
             browser.get(tab_link)
-            time.sleep(4)
+            time.sleep(3)
             pos = [] #list to store positions for each 'char' in 'string'
             for n in range(len(tab_link)):
                 if tab_link[n] == '/':
