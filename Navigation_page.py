@@ -16,7 +16,7 @@ import requests
 app = wx.App()
 
 def ChromeDriver():
-    browser = webdriver.Chrome(executable_path=str(f"F:\\chromedriver.exe"))
+    browser = webdriver.Chrome(executable_path=str(f"C:\\chromedriver.exe"))
 
     browser.get("https://www.hankintailmoitukset.fi/en/search")
     browser.maximize_window()
