@@ -16,7 +16,7 @@ def remove_html_tag(string):
     main_string = re.sub(cleanr, '', string)
     return main_string
 
-def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number):
+def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_htmlsource):
 
     SegField = []
     for data in range(42):
@@ -25,11 +25,11 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number):
     a = True
     while a == True:
         try:
-            Email = get_htmlsource.partition('Sähköpostiosoite </div>')[2].partition("</div>")[0].strip()
+            Email = buyer_htmlsource.partition('Sähköpostiosoite </div>')[2].partition("</div>")[0].strip()
             Email = remove_html_tag(Email)
             SegField[1] = Email.strip()
             
-            name_and_address = get_htmlsource.partition('Nimi ja osoitteet</span>')[2].strip()
+            name_and_address = buyer_htmlsource.partition('Nimi ja osoitteet</span>')[2].strip()
 
             buyer_name = name_and_address.partition('Virallinen nimi </div>')[2].partition("</div>")[0].strip()
             buyer_name = remove_html_tag(buyer_name)
