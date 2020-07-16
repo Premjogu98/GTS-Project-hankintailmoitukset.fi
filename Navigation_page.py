@@ -16,7 +16,7 @@ import requests
 app = wx.App()
 
 def ChromeDriver():
-    browser = webdriver.Chrome(executable_path=str(f"F:\\chromedriver.exe"))
+    browser = webdriver.Chrome(executable_path=str(f"C:\\chromedriver.exe"))
 
     browser.get("https://www.hankintailmoitukset.fi/en/search")
     browser.maximize_window()
@@ -27,6 +27,7 @@ def ChromeDriver():
         break
     TenderDeadline_list = []
     count = 0
+    tr_count = 75
     for tr in range(1, int(Tender_count), 1):
         for published in browser.find_elements_by_xpath(f'/html/body/div[1]/main/div/div/div[2]/div/table/tbody/tr[{str(tr)}]/td[3]/span'):
             published = published.get_attribute('innerText').strip()
@@ -64,6 +65,13 @@ def ChromeDriver():
         else:
             print('Publish Date Dead')
             break
+        if tr == tr_count:
+            for show_more in browser.find_elements_by_xpath('//*[@id="main"]/div/div/div[2]/div/div[3]/button'):
+                show_more.click()
+                tr_count += tr
+                time.sleep(8)
+                break
+            
     print(f"\nTotal Link Collected {len(TenderDeadline_list)}")
 
     navigation_things(TenderDeadline_list,browser)
