@@ -16,7 +16,7 @@ def remove_html_tag(string):
     main_string = re.sub(cleanr, '', string)
     return main_string
 
-def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_htmlsource):
+def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_htmlsource,overview_htmlsource):
 
     SegField = []
     for data in range(42):
@@ -75,12 +75,16 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_ht
             purchase_url = purchase_url.partition('href="')[2].partition('"')[0].strip()
             SegField[8] = purchase_url.strip()
             
-            Title =  get_htmlsource.partition('Hankinnan nimi </div>')[2].partition("</div>")[0].strip()
+            Title =  overview_htmlsource.partition('Hankinnan nimi </div>')[2].partition("</div>")[0].strip()
             Title = remove_html_tag(Title)
             Title = string.capwords(str(Title))
             SegField[19] = Title.strip()
-
-            Tender_detail = get_htmlsource.partition('Hankinnan lyhyt kuvaus')[2].partition('class="notice-public-standard')[0].strip()
+            if str(SegField[19]) == '':
+                Title =  overview_htmlsource.partition('Hankinnan otsikkotiedot </div>')[2].partition("</div>")[0].strip()
+                Title = remove_html_tag(Title)
+                Title = string.capwords(str(Title))
+                SegField[19] = Title.strip()
+            Tender_detail = overview_htmlsource.partition('Hankinnan lyhyt kuvaus')[2].partition('class="notice-public-standard')[0].strip()
             Tender_detail = Tender_detail.partition('class="value-row-value')[2]
             Tender_detail = remove_html_tag(Tender_detail)
             Tender_detail = Tender_detail.partition('">')[2].partition('<div')[0].strip()
@@ -88,16 +92,18 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_ht
             if len(Tender_detail) >= 800:
                 Tender_detail = str(Tender_detail)[:800]+'...'
                 Tender_detail = string.capwords(str(Tender_detail))
-            Type_of_contract = get_htmlsource.partition('Sopimuksen tyyppi</div></div>')[2].partition('</div>')[0].strip()
+
+            Type_of_contract = overview_htmlsource.partition('Sopimuksen tyyppi</div></div>')[2].partition('</div>')[0].strip()
             Type_of_contract = remove_html_tag(Type_of_contract)
             Type_of_contract = string.capwords(str(Type_of_contract))
 
-            NUTS_code = get_htmlsource.partition('NUTS-koodi</div>')[2].partition('</span>')[0].strip()
+            NUTS_code = overview_htmlsource.partition('class="notice-public-nuts-value"')[2].partition('</span>')[0].strip()
             NUTS_code = remove_html_tag(NUTS_code)
+            NUTS_code = NUTS_code.partition('>')[2].strip()
             if len(NUTS_code) >= 25:
                 NUTS_code = ''
 
-            Type_of_procedure = get_htmlsource.partition('Menettelyn luonne </div>')[2].partition('</div>')[0].strip()
+            Type_of_procedure = overview_htmlsource.partition('Menettelyn luonne </div>')[2].partition('</div>')[0].strip()
             Type_of_procedure = remove_html_tag(Type_of_procedure)
             Type_of_procedure = string.capwords(str(Type_of_procedure))
 
@@ -159,7 +165,7 @@ def scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_ht
                 wx.MessageBox(' Short Desc Blank ','hankintailmoitukset.fi', wx.OK | wx.ICON_INFORMATION)
             else:
                 check_date(get_htmlsource, SegField)
-                pass
+                # pass
 
             a = False
         except Exception as e:

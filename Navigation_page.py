@@ -95,6 +95,8 @@ def navigation_things(TenderDeadline_list,browser):
             tab_links_list.append(tab_links.get_attribute('href'))
             
         get_htmlsource = ''
+        buyer_htmlsource = ''
+        overview_htmlsource = ''
         for tab_link in tab_links_list:
             browser.get(tab_link)
             time.sleep(3)
@@ -105,17 +107,19 @@ def navigation_things(TenderDeadline_list,browser):
             tab_link_class = tab_link[pos[-1]:]
             tab_link_class = tab_link_class.partition('/')[2].strip()
             tab_outerhtml = ''
-            buyer_htmlsource = ''
             for tab_outerhtml in browser.find_elements_by_xpath(f'//*[@class="notice-public-{tab_link_class} card-body preview"]'):
                 tab_outerhtml = tab_outerhtml.get_attribute('outerHTML').strip().replace('<!---->','').replace('-\t','').replace('-\n','').replace('\t','').replace('\n','')
                 tab_outerhtml = html.unescape(str(tab_outerhtml))
                 tab_outerhtml = re.sub(' +', ' ', str(tab_outerhtml))
+
+                if tab_link_class == 'overview':
+                    overview_htmlsource += tab_outerhtml
                 if tab_link_class == 'authority':
                     buyer_htmlsource += tab_outerhtml
                 get_htmlsource += tab_outerhtml
         RM_button =  get_htmlsource.partition('<button')[2].partition("</button>")[0].strip()
         get_htmlsource = get_htmlsource.replace(RM_button,'').replace('<button','').replace('</button>','')
-        scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_htmlsource)
+        scrap_data(Tender_link,Tender_deadline,get_htmlsource,notice_number,buyer_htmlsource,overview_htmlsource)
         print(f'Total: {str(len(TenderDeadline_list))} Deadline Not given: {Global_var.deadline_Not_given} duplicate: {Global_var.duplicate} inserted: {Global_var.inserted} expired: {Global_var.expired} QC Tenders: {Global_var.QC_Tenders}')
     
     wx.MessageBox(f'Total: {str(len(TenderDeadline_list))}\nDeadline Not given: {Global_var.deadline_Not_given}\nduplicate: {Global_var.duplicate}\ninserted: {Global_var.inserted}\nexpired: {Global_var.expired}\nQC Tenders: {Global_var.QC_Tenders}','hankintailmoitukset.fi', wx.OK | wx.ICON_INFORMATION)
